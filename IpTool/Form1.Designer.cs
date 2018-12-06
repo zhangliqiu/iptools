@@ -35,7 +35,7 @@
             this.radioButton_S = new System.Windows.Forms.RadioButton();
             this.radioButton_C = new System.Windows.Forms.RadioButton();
             this.textBox_local_ip = new System.Windows.Forms.TextBox();
-            this.button_open = new System.Windows.Forms.Button();
+            this.button_bind = new System.Windows.Forms.Button();
             this.textBox_local_port = new System.Windows.Forms.TextBox();
             this.groupBox_role_select = new System.Windows.Forms.GroupBox();
             this.groupBox_local = new System.Windows.Forms.GroupBox();
@@ -70,6 +70,7 @@
             this.radioButton_r_t_file = new System.Windows.Forms.RadioButton();
             this.groupBox_r_dis = new System.Windows.Forms.GroupBox();
             this.textBox_r_dis = new System.Windows.Forms.TextBox();
+            this.label_local_info = new System.Windows.Forms.Label();
             this.panel_tcp_or_udp.SuspendLayout();
             this.panel_CorS.SuspendLayout();
             this.groupBox_role_select.SuspendLayout();
@@ -157,16 +158,17 @@
             this.textBox_local_ip.Name = "textBox_local_ip";
             this.textBox_local_ip.Size = new System.Drawing.Size(100, 21);
             this.textBox_local_ip.TabIndex = 1;
+            this.textBox_local_ip.TextChanged += new System.EventHandler(this.textBoxText_Change);
             // 
-            // button_open
+            // button_bind
             // 
-            this.button_open.Location = new System.Drawing.Point(167, 15);
-            this.button_open.Name = "button_open";
-            this.button_open.Size = new System.Drawing.Size(75, 23);
-            this.button_open.TabIndex = 3;
-            this.button_open.Text = "绑定";
-            this.button_open.UseVisualStyleBackColor = true;
-            this.button_open.Click += new System.EventHandler(this.button_open_Click);
+            this.button_bind.Location = new System.Drawing.Point(167, 15);
+            this.button_bind.Name = "button_bind";
+            this.button_bind.Size = new System.Drawing.Size(75, 23);
+            this.button_bind.TabIndex = 3;
+            this.button_bind.Text = "绑定";
+            this.button_bind.UseVisualStyleBackColor = true;
+            this.button_bind.Click += new System.EventHandler(this.button_event);
             // 
             // textBox_local_port
             // 
@@ -174,6 +176,7 @@
             this.textBox_local_port.Name = "textBox_local_port";
             this.textBox_local_port.Size = new System.Drawing.Size(49, 21);
             this.textBox_local_port.TabIndex = 2;
+            this.textBox_local_port.TextChanged += new System.EventHandler(this.textBoxText_Change);
             // 
             // groupBox_role_select
             // 
@@ -188,9 +191,10 @@
             // 
             // groupBox_local
             // 
+            this.groupBox_local.Controls.Add(this.label_local_info);
             this.groupBox_local.Controls.Add(this.textBox_local_ip);
             this.groupBox_local.Controls.Add(this.textBox_local_port);
-            this.groupBox_local.Controls.Add(this.button_open);
+            this.groupBox_local.Controls.Add(this.button_bind);
             this.groupBox_local.Enabled = false;
             this.groupBox_local.Location = new System.Drawing.Point(121, 12);
             this.groupBox_local.Name = "groupBox_local";
@@ -231,6 +235,7 @@
             this.textBox_s_t_ip.Name = "textBox_s_t_ip";
             this.textBox_s_t_ip.Size = new System.Drawing.Size(100, 21);
             this.textBox_s_t_ip.TabIndex = 1;
+            this.textBox_s_t_ip.TextChanged += new System.EventHandler(this.textBoxText_Change);
             // 
             // button_s_t_con
             // 
@@ -238,6 +243,7 @@
             this.button_s_t_con.Name = "button_s_t_con";
             this.button_s_t_con.Size = new System.Drawing.Size(75, 23);
             this.button_s_t_con.TabIndex = 3;
+            this.button_s_t_con.Text = "连接";
             this.button_s_t_con.UseVisualStyleBackColor = true;
             // 
             // textBox_s_t_port
@@ -246,6 +252,7 @@
             this.textBox_s_t_port.Name = "textBox_s_t_port";
             this.textBox_s_t_port.Size = new System.Drawing.Size(49, 21);
             this.textBox_s_t_port.TabIndex = 2;
+            this.textBox_s_t_port.TextChanged += new System.EventHandler(this.textBoxText_Change);
             // 
             // button_s_t_send
             // 
@@ -543,6 +550,17 @@
             this.textBox_r_dis.Size = new System.Drawing.Size(136, 77);
             this.textBox_r_dis.TabIndex = 1;
             // 
+            // label_local_info
+            // 
+            this.label_local_info.AutoSize = true;
+            this.label_local_info.Font = new System.Drawing.Font("楷体", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(1)), true);
+            this.label_local_info.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.label_local_info.Location = new System.Drawing.Point(9, 45);
+            this.label_local_info.Name = "label_local_info";
+            this.label_local_info.Size = new System.Drawing.Size(215, 22);
+            this.label_local_info.TabIndex = 4;
+            this.label_local_info.Text = "提示：ip\"0.0.0.0\"表示本地所有网卡\r\n      port\"0\"表示有系统随机提供端口";
+            // 
             // mainform
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -594,7 +612,7 @@
         private System.Windows.Forms.RadioButton radioButton_S;
         private System.Windows.Forms.RadioButton radioButton_C;
         private System.Windows.Forms.TextBox textBox_local_ip;
-        private System.Windows.Forms.Button button_open;
+        private System.Windows.Forms.Button button_bind;
         private System.Windows.Forms.TextBox textBox_local_port;
         private System.Windows.Forms.GroupBox groupBox_role_select;
         private System.Windows.Forms.GroupBox groupBox_local;
@@ -629,6 +647,7 @@
         private System.Windows.Forms.GroupBox groupBox_r_dis;
         private System.Windows.Forms.TextBox textBox_r_dis;
         private System.Windows.Forms.RadioButton radioButton_b_t_recv;
+        private System.Windows.Forms.Label label_local_info;
     }
 }
 
