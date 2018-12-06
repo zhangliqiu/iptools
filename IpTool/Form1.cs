@@ -24,7 +24,30 @@ namespace IpTool
 
         private void mainform_Load(object sender, EventArgs e)
         {
+            panel_CorS.Enabled = false;
+            groupBox_local.Enabled = false;
+            groupBox_recv.Enabled = false;
+            groupBox_send.Enabled = false;
 
+        }
+
+        private void radioButton_udp_CheckedChanged_1(object sender, EventArgs e)
+        {
+            if (radioButton_udp.Checked)
+            {
+                panel_CorS.Enabled = false;
+                groupBox_local.Enabled = true;
+            } 
+            else
+            {
+
+            }
+            
+        }
+
+        private void button_open_Click(object sender, EventArgs e)
+        {
+            groupBox_send.Enabled = true;
         }
     }
 }
