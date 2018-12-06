@@ -10,11 +10,21 @@ using System.Windows.Forms;
 
 namespace IpTool
 {
-    public partial class Form1 : Form
+    public partial class mainform : Form
     {
-        public Form1()
+        public mainform()
         {
             InitializeComponent();
+        }
+
+        private void radioButton_udp_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void mainform_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }
