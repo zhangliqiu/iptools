@@ -560,6 +560,7 @@
             this.textBox_r_dis.Location = new System.Drawing.Point(6, 20);
             this.textBox_r_dis.Multiline = true;
             this.textBox_r_dis.Name = "textBox_r_dis";
+            this.textBox_r_dis.ReadOnly = true;
             this.textBox_r_dis.Size = new System.Drawing.Size(136, 77);
             this.textBox_r_dis.TabIndex = 1;
             // 

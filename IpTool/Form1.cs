@@ -19,7 +19,12 @@ namespace IpTool
         bool bStartRecv = false;
         bool bTcpListen = false;
         bool bSendback = false;
+        bool bUdp = false;
+        bool bBind = false;
+        bool bTcpClient = false;
 
+        Datetype sendtype, recvtype, backtype;
+        enum Datetype { Text, Bin, File, Hex, Recved };
         #region//   初始化区
         public mainform()
         {
@@ -43,19 +48,19 @@ namespace IpTool
                     #region
                     //udp
                     case "radioButton_udp":
-                        { Enable_init(); groupBox_local.Enabled = true; }
+                        { bUdp = true; Enable_init(); groupBox_local.Enabled = true; }
                         break;
                     //tcp
                     case "radioButton_tcp":
-                        { Enable_init(); panel_CorS.Enabled = true; }
+                        { bUdp = false; Enable_init(); panel_CorS.Enabled = true; }
                         break;
                     //tcp_client
                     case "radioButton_C":
-                        { Enable_init(false); groupBox_local.Enabled = true; }
+                        { bTcpClient = true; Enable_init(false); groupBox_local.Enabled = true; }
                         break;
                     //tcp_server
                     case "radioButton_S":
-                        { Enable_init(false); groupBox_local.Enabled = true; }
+                        Select_tcp_server();                        
                         break;
                     #endregion
 
@@ -64,19 +69,19 @@ namespace IpTool
                     #region
                     //二进制
                     case "radioButton_s_t_bin":
-                        { groupBox_s_contain.Enabled = true; }
+                        { sendtype = Datetype.Bin; Send_button_contain(); }
                         break;
                     //文件
                     case "radioButton_s_t_file":
-                        { groupBox_s_contain.Enabled = true; }
+                        { sendtype = Datetype.File; Send_button_contain(); }
                         break;
                     //十六进制
                     case "radioButton_s_t_hex":
-                        { groupBox_s_contain.Enabled = true; }
+                        { sendtype = Datetype.Hex; Send_button_contain(); }
                         break;
                     //文本
                     case "radioButton_s_t_text":
-                        { groupBox_s_contain.Enabled = true; }
+                        { sendtype = Datetype.Text; Send_button_contain(); }
                         break;
                     #endregion
 
@@ -129,6 +134,34 @@ namespace IpTool
                         break;
                 }
 
+        }
+        //  选择tcp监听模式
+        private void Select_tcp_server()
+        {
+            bTcpClient = false;
+            Enable_init(false);
+            groupBox_local.Enabled = true;
+            button_bind.Text = "监听";
+        }
+
+        private void Send_button_contain()
+        {
+            groupBox_s_contain.Enabled = true;
+            button_s_t_send.Enabled = Send_check();
+        }
+        //  来自与单选按钮
+        //  判断激活发送功能的条件
+        private bool Send_check()
+        {
+            if (bBind)
+                if (check_point(textBox_s_t_ip.Text, textBox_s_t_port.Text))
+                    if (groupBox_s_contain.Enabled)
+                        if(
+                            bUdp
+                            || bTcp_connected
+                            )
+                        return true;
+            return false;
         }
         #endregion
 
@@ -322,6 +355,12 @@ namespace IpTool
                 case "断开":
                     un_connect_remote();
                     break;
+                case "发送":
+                    My_send();
+                    break;
+                case "监听":
+                    My_Listen();
+                    break;
                 default:
                     break;
             }
@@ -329,6 +368,124 @@ namespace IpTool
 
         }
 
+        private void My_Listen()
+        {
+            //
+            groupBox_recv.Enabled = true;
+            bTcpListen = true;
+            button_bind.Text = "释放";
+        }
+
+        private void My_send()
+        {
+
+
+        }
+        #region//   绑定操作
+        private void local_socket_bind()
+        {
+            //
+
+            /// udp本地绑定
+            /// 
+            /// 
+            if (bUdp)
+            {
+                //绑定成功
+                if (bBind = My_bind())
+                {
+                    Group_local_control(true);
+                    groupBox_send.Enabled = true;
+                    groupBox_recv.Enabled = true;
+                }
+            }
+            /// tcp本地绑定
+            /// 
+            /// 
+            else
+            {
+                //绑定成功
+                if (bBind = My_bind())
+                {
+                    Group_local_control(true);
+                    if (bTcpClient) groupBox_send.Enabled = true;
+                }
+            }
+
+
+        }
+
+        private void local_socket_unbind()
+        {
+            /// 像 TcpListen 这种少数情况要优先考虑
+            /// 最好在if判断的最前面
+            
+            if(bTcpListen)
+            {
+                My_free();
+                Group_local_control(false,true);
+            }
+            /// udp释放
+            /// 
+            /// 
+            else if (bUdp)
+            {
+                My_free();
+                Group_local_control(false);
+
+            }
+            /// tcp释放
+            /// 
+            /// 
+            else
+            {
+                My_free();
+                Group_local_control(false);
+
+            }
+        }
+
+        private void Group_local_control(bool bl,bool bListen=false)
+        {
+            if(bListen)
+            {
+                //  Listen_server
+                //  监听绑定
+                if (bl)
+                {
+                    button_bind.Text = "释放";
+                    textBox_local_ip.Enabled = false;
+                    textBox_local_port.Enabled = false;
+                }
+                //  监听的释放
+                else
+                {
+                    button_bind.Text = "监听";
+                    textBox_local_port.Enabled = true;
+                    textBox_local_ip.Enabled = true;
+                    groupBox_send_empty();
+                    groupBox_recv_empty();
+                }
+
+            }
+            else if (bl)
+            {
+                button_bind.Text = "释放";
+                textBox_local_ip.Enabled = false;
+                textBox_local_port.Enabled = false;
+            }
+            else
+            {
+                button_bind.Text = "绑定";
+                textBox_local_port.Enabled = true;
+                textBox_local_ip.Enabled = true;
+                groupBox_send_empty();
+                groupBox_recv_empty();
+            }
+        }
+
+
+        #endregion
         private void un_connect_remote()
         {
             //
@@ -336,8 +493,8 @@ namespace IpTool
             button_s_t_con.Text = "连接";
             bTcp_connected = false;
             button_s_t_send.Enabled = false;
-            textBox_s_t_ip.Enabled = false;
-            textBox_s_t_port.Enabled = false;
+            textBox_s_t_ip.Enabled = true;
+            textBox_s_t_port.Enabled = true;
 
         }
 
@@ -348,76 +505,30 @@ namespace IpTool
             {
                 button_s_t_con.Text = "断开";
                 bTcp_connected = true;
-                button_s_t_send.Enabled = true;
+                if(groupBox_s_contain.Enabled) button_s_t_send.Enabled = true;
+                textBox_s_t_ip.Enabled = false;
+                textBox_s_t_port.Enabled = false;
 
             }
         }
 
-        private void local_socket_unbind()
+
+        private void My_free()
         {
-            //
-
-            if (bTcp_connected) un_connect_remote();
-            button_bind.Text = "绑定";
-            groupBox_send_empty();
-            groupBox_recv_empty();
-            textBox_local_ip.Enabled = true;
-            textBox_local_port.Enabled = true;
-        }
-
-        private void local_socket_bind()
-        {
-            //
-
-            // 工作模式检查
-            if (radioButton_udp.Checked)
+            ///关于udp的释放相对容易
+            ///tcp则相对复杂
+            ///尤其是已经连接的tcp
+            ///和作为监听的tcp
+            ///
+            if (bTcpListen)
             {
-                // udp模式,绑定成功就能开始接收数据
-                if (str_local_ip_check && Local_udp_bind()) 
-                {
-                    bStartRecv = true;
-                    groupBox_recv.Enabled = true;
-                    groupBox_send.Enabled = true;
-                    button_bind.Text = "释放";
-                    textBox_local_ip.Enabled = false;
-                    textBox_local_port.Enabled = false;
-                }
+                
             }
-            //如果时tcp则情况较为复杂
-            else
-            {
-                // Client模式
-                if(radioButton_C.Checked&&Local_tcp_bind())
-                {
-                    
-                }
-                // Listen模式
-                else if(Local_tcp_listen())
-                {
-                    ///成功监听
-                    ///开始接收数据
-                    groupBox_recv.Enabled=true;
-                }
-            }
-            
 
         }
 
-        private bool Local_tcp_listen()
+        private bool My_bind()
         {
-            return true;
-        }
-
-        private bool Local_tcp_bind()
-        {
-            return true;
-        }
-
-        // 绑定本地udp 采用异常机制
-        private bool Local_udp_bind()
-        {
-            //
-
             return true;
         }
 
@@ -448,14 +559,13 @@ namespace IpTool
                     str_remote_ip_check = true;
 
                     //  激活发送按钮的条件判断 1.udp协议 或者 已经连接的 tcp
-                    if (radioButton_udp.Checked
+                    if (bUdp
                         || bTcp_connected)
                     {
-                        button_s_t_send.Enabled = true;
+                        if (groupBox_s_contain.Enabled) button_s_t_send.Enabled = true;
                     }
                     //  激活连接按钮的条件   1.tcp协议 并且 client模式
-                    else if (radioButton_tcp.Checked
-                        && radioButton_C.Checked)
+                    else if (radioButton_C.Checked)
                     {
                         button_s_t_con.Enabled = true;
                     }
