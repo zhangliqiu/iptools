@@ -22,6 +22,7 @@ namespace IpTool
         bool bUdp = false;
         bool bBind = false;
         bool bTcpClient = false;
+        
 
         Datetype sendtype, recvtype, backtype;
         enum Datetype { Text, Bin, File, Hex, Recved };
@@ -486,15 +487,17 @@ namespace IpTool
 
 
         #endregion
+
         private void un_connect_remote()
         {
-            //
+            //断开的动作只会来自与 TcpClient
 
             button_s_t_con.Text = "连接";
             bTcp_connected = false;
             button_s_t_send.Enabled = false;
             textBox_s_t_ip.Enabled = true;
             textBox_s_t_port.Enabled = true;
+            groupBox_recv.Enabled = false;
 
         }
 
@@ -503,13 +506,25 @@ namespace IpTool
             //连接前先检查目的point
             if (str_remote_ip_check)
             {
-                button_s_t_con.Text = "断开";
-                bTcp_connected = true;
-                if(groupBox_s_contain.Enabled) button_s_t_send.Enabled = true;
-                textBox_s_t_ip.Enabled = false;
-                textBox_s_t_port.Enabled = false;
+                if(bTcp_connected = connect_ditail())
+                {
+                    button_s_t_con.Text = "断开";
+                    if(groupBox_s_contain.Enabled) button_s_t_send.Enabled = true;
+                    textBox_s_t_ip.Enabled = false;
+                    textBox_s_t_port.Enabled = false;
+
+                    bStartRecv = true;
+                    groupBox_recv.Enabled = true;
+
+                }
 
             }
+        }
+
+        private bool connect_ditail()
+        {
+
+            return true;
         }
 
 
