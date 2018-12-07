@@ -39,6 +39,7 @@
             this.textBox_local_port = new System.Windows.Forms.TextBox();
             this.groupBox_role_select = new System.Windows.Forms.GroupBox();
             this.groupBox_local = new System.Windows.Forms.GroupBox();
+            this.label_local_info = new System.Windows.Forms.Label();
             this.groupBox_send = new System.Windows.Forms.GroupBox();
             this.groupBox_s_to_where = new System.Windows.Forms.GroupBox();
             this.textBox_s_t_ip = new System.Windows.Forms.TextBox();
@@ -70,7 +71,6 @@
             this.radioButton_r_t_file = new System.Windows.Forms.RadioButton();
             this.groupBox_r_dis = new System.Windows.Forms.GroupBox();
             this.textBox_r_dis = new System.Windows.Forms.TextBox();
-            this.label_local_info = new System.Windows.Forms.Label();
             this.panel_tcp_or_udp.SuspendLayout();
             this.panel_CorS.SuspendLayout();
             this.groupBox_role_select.SuspendLayout();
@@ -203,6 +203,17 @@
             this.groupBox_local.TabStop = false;
             this.groupBox_local.Text = "本地";
             // 
+            // label_local_info
+            // 
+            this.label_local_info.AutoSize = true;
+            this.label_local_info.Font = new System.Drawing.Font("楷体", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(1)), true);
+            this.label_local_info.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.label_local_info.Location = new System.Drawing.Point(9, 45);
+            this.label_local_info.Name = "label_local_info";
+            this.label_local_info.Size = new System.Drawing.Size(215, 22);
+            this.label_local_info.TabIndex = 4;
+            this.label_local_info.Text = "提示：ip\"0.0.0.0\"表示本地所有网卡\r\n      port\"0\"表示有系统随机提供端口";
+            // 
             // groupBox_send
             // 
             this.groupBox_send.Controls.Add(this.groupBox_s_to_where);
@@ -245,6 +256,7 @@
             this.button_s_t_con.TabIndex = 3;
             this.button_s_t_con.Text = "连接";
             this.button_s_t_con.UseVisualStyleBackColor = true;
+            this.button_s_t_con.Click += new System.EventHandler(this.button_event);
             // 
             // textBox_s_t_port
             // 
@@ -375,6 +387,7 @@
             this.checkBox_back.TabIndex = 0;
             this.checkBox_back.Text = "自动回传";
             this.checkBox_back.UseVisualStyleBackColor = true;
+            this.checkBox_back.CheckedChanged += new System.EventHandler(this.checkBox_CheckedChanged);
             // 
             // groupBox_b_t
             // 
@@ -549,17 +562,6 @@
             this.textBox_r_dis.Name = "textBox_r_dis";
             this.textBox_r_dis.Size = new System.Drawing.Size(136, 77);
             this.textBox_r_dis.TabIndex = 1;
-            // 
-            // label_local_info
-            // 
-            this.label_local_info.AutoSize = true;
-            this.label_local_info.Font = new System.Drawing.Font("楷体", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(1)), true);
-            this.label_local_info.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.label_local_info.Location = new System.Drawing.Point(9, 45);
-            this.label_local_info.Name = "label_local_info";
-            this.label_local_info.Size = new System.Drawing.Size(215, 22);
-            this.label_local_info.TabIndex = 4;
-            this.label_local_info.Text = "提示：ip\"0.0.0.0\"表示本地所有网卡\r\n      port\"0\"表示有系统随机提供端口";
             // 
             // mainform
             // 
