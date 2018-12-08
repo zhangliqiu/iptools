@@ -71,6 +71,8 @@
             this.radioButton_r_t_file = new System.Windows.Forms.RadioButton();
             this.groupBox_r_dis = new System.Windows.Forms.GroupBox();
             this.textBox_r_dis = new System.Windows.Forms.TextBox();
+            this.statusStrip = new System.Windows.Forms.StatusStrip();
+            this.Status_label = new System.Windows.Forms.ToolStripStatusLabel();
             this.panel_tcp_or_udp.SuspendLayout();
             this.panel_CorS.SuspendLayout();
             this.groupBox_role_select.SuspendLayout();
@@ -85,6 +87,7 @@
             this.groupBox_b_contain.SuspendLayout();
             this.groupBox_r_t.SuspendLayout();
             this.groupBox_r_dis.SuspendLayout();
+            this.statusStrip.SuspendLayout();
             this.SuspendLayout();
             // 
             // panel_tcp_or_udp
@@ -158,6 +161,8 @@
             this.textBox_local_ip.Name = "textBox_local_ip";
             this.textBox_local_ip.Size = new System.Drawing.Size(100, 21);
             this.textBox_local_ip.TabIndex = 1;
+            this.textBox_local_ip.Text = "127.0.0.1";
+            this.textBox_local_ip.Click += new System.EventHandler(this.Click_TextBox);
             this.textBox_local_ip.TextChanged += new System.EventHandler(this.textBoxText_Change);
             // 
             // button_bind
@@ -176,6 +181,8 @@
             this.textBox_local_port.Name = "textBox_local_port";
             this.textBox_local_port.Size = new System.Drawing.Size(49, 21);
             this.textBox_local_port.TabIndex = 2;
+            this.textBox_local_port.Text = "0";
+            this.textBox_local_port.Click += new System.EventHandler(this.Click_TextBox);
             this.textBox_local_port.TextChanged += new System.EventHandler(this.textBoxText_Change);
             // 
             // groupBox_role_select
@@ -246,6 +253,8 @@
             this.textBox_s_t_ip.Name = "textBox_s_t_ip";
             this.textBox_s_t_ip.Size = new System.Drawing.Size(100, 21);
             this.textBox_s_t_ip.TabIndex = 1;
+            this.textBox_s_t_ip.Text = "127.0.0.1";
+            this.textBox_s_t_ip.Click += new System.EventHandler(this.Click_TextBox);
             this.textBox_s_t_ip.TextChanged += new System.EventHandler(this.textBoxText_Change);
             // 
             // button_s_t_con
@@ -264,6 +273,8 @@
             this.textBox_s_t_port.Name = "textBox_s_t_port";
             this.textBox_s_t_port.Size = new System.Drawing.Size(49, 21);
             this.textBox_s_t_port.TabIndex = 2;
+            this.textBox_s_t_port.Text = "0";
+            this.textBox_s_t_port.Click += new System.EventHandler(this.Click_TextBox);
             this.textBox_s_t_port.TextChanged += new System.EventHandler(this.textBoxText_Change);
             // 
             // button_s_t_send
@@ -560,15 +571,31 @@
             this.textBox_r_dis.Location = new System.Drawing.Point(6, 20);
             this.textBox_r_dis.Multiline = true;
             this.textBox_r_dis.Name = "textBox_r_dis";
-            this.textBox_r_dis.ReadOnly = true;
             this.textBox_r_dis.Size = new System.Drawing.Size(136, 77);
             this.textBox_r_dis.TabIndex = 1;
+            // 
+            // statusStrip
+            // 
+            this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.Status_label});
+            this.statusStrip.Location = new System.Drawing.Point(0, 537);
+            this.statusStrip.Name = "statusStrip";
+            this.statusStrip.Size = new System.Drawing.Size(399, 22);
+            this.statusStrip.TabIndex = 7;
+            this.statusStrip.Text = "statusStrip1";
+            // 
+            // Status_label
+            // 
+            this.Status_label.Name = "Status_label";
+            this.Status_label.Size = new System.Drawing.Size(56, 17);
+            this.Status_label.Text = "初始状态";
             // 
             // mainform
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(399, 516);
+            this.ClientSize = new System.Drawing.Size(399, 559);
+            this.Controls.Add(this.statusStrip);
             this.Controls.Add(this.groupBox_recv);
             this.Controls.Add(this.groupBox_send);
             this.Controls.Add(this.groupBox_local);
@@ -602,7 +629,10 @@
             this.groupBox_r_t.PerformLayout();
             this.groupBox_r_dis.ResumeLayout(false);
             this.groupBox_r_dis.PerformLayout();
+            this.statusStrip.ResumeLayout(false);
+            this.statusStrip.PerformLayout();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -651,6 +681,8 @@
         private System.Windows.Forms.TextBox textBox_r_dis;
         private System.Windows.Forms.RadioButton radioButton_b_t_recv;
         private System.Windows.Forms.Label label_local_info;
+        private System.Windows.Forms.StatusStrip statusStrip;
+        private System.Windows.Forms.ToolStripStatusLabel Status_label;
     }
 }
 

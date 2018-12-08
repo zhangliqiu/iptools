@@ -36,9 +36,9 @@ namespace IpTool
         TcpListener tcplistener;
         UdpClient udpclient;
 
-        #endregion
-        
         enum Datetype { Text, Bin, File, Hex, Recved };
+        #endregion
+
         #region//   初始化区
         public mainform()
         {
@@ -74,7 +74,7 @@ namespace IpTool
                         break;
                     //tcp_server
                     case "radioButton_S":
-                        Select_tcp_server();                        
+                        Select_tcp_server();
                         break;
                     #endregion
 
@@ -83,19 +83,19 @@ namespace IpTool
                     #region
                     //二进制
                     case "radioButton_s_t_bin":
-                        { sendtype = Datetype.Bin; Send_button_contain(); }
+                        { sendtype = Datetype.Bin; Send_button_contain(); groupBox_s_contain.Text = "类容"; }
                         break;
                     //文件
                     case "radioButton_s_t_file":
-                        { sendtype = Datetype.File; Send_button_contain(); }
+                        { sendtype = Datetype.File; Send_button_contain(); groupBox_s_contain.Text = "路径"; }
                         break;
                     //十六进制
                     case "radioButton_s_t_hex":
-                        { sendtype = Datetype.Hex; Send_button_contain(); }
+                        { sendtype = Datetype.Hex; Send_button_contain(); groupBox_s_contain.Text = "类容"; }
                         break;
                     //文本
                     case "radioButton_s_t_text":
-                        { sendtype = Datetype.Text; Send_button_contain(); }
+                        { sendtype = Datetype.Text; Send_button_contain(); groupBox_s_contain.Text = "类容"; }
                         break;
                     #endregion
 
@@ -104,19 +104,19 @@ namespace IpTool
                     #region
                     //文件
                     case "radioButton_r_t_file":
-                        { groupBox_r_dis.Enabled = true; }
+                        { groupBox_r_dis.Enabled = true; groupBox_r_dis.Text = "路径"; }
                         break;
                     ///文本
                     case "radioButton_r_t_text":
-                        { groupBox_r_dis.Enabled = true; }
+                        { groupBox_r_dis.Enabled = true; groupBox_r_dis.Text = "类容"; }
                         break;
                     ///2进制
                     case "radioButton_r_t_bin":
-                        { groupBox_r_dis.Enabled = true; }
+                        { groupBox_r_dis.Enabled = true; groupBox_r_dis.Text = "类容"; }
                         break;
                     ///16进制
                     case "radioButton_r_t_hex":
-                        { groupBox_r_dis.Enabled = true; }
+                        { groupBox_r_dis.Enabled = true; groupBox_r_dis.Text = "类容"; }
                         break;
                     #endregion
 
@@ -170,11 +170,11 @@ namespace IpTool
             if (bBind)
                 if (check_point(textBox_s_t_ip.Text, textBox_s_t_port.Text))
                     if (groupBox_s_contain.Enabled)
-                        if(
+                        if (
                             bUdp
                             || bTcp_connected
                             )
-                        return true;
+                            return true;
             return false;
         }
         #endregion
@@ -259,9 +259,9 @@ namespace IpTool
         }
         private void groupBox_local_empty()
         {
-            textBox_local_ip.Text = "";
-            textBox_local_port.Text = "";
-            button_bind.Enabled = false;
+            textBox_local_ip.Text = "127.0.0.1";
+            textBox_local_port.Text = "0";
+            button_bind.Enabled = true;
             groupBox_local.Enabled = false;
             textBox_local_ip.Enabled = true;
             textBox_local_port.Enabled = true;
@@ -286,15 +286,16 @@ namespace IpTool
         }
         private void groupBox_s_contain_empty()
         {
+            groupBox_s_contain.Text = "类容";
             textBox_s_contain.Text = "";
             groupBox_s_contain.Enabled = false;
         }
         private void groupBox_s_to_where_empty()
         {
-            textBox_s_t_ip.Text = "";
+            textBox_s_t_ip.Text = "127.0.0.1";
             textBox_s_t_ip.Enabled = true;
             textBox_s_t_port.Enabled = true;
-            textBox_s_t_port.Text = "";
+            textBox_s_t_port.Text = null;
             button_s_t_send.Enabled = false;
             button_s_t_con.Enabled = false;
         }
@@ -315,12 +316,12 @@ namespace IpTool
             radioButton_r_t_bin.Checked = false;
             radioButton_r_t_file.Checked = false;
             radioButton_r_t_hex.Checked = false;
-            radioButton_r_t_text.Checked = false;
+            radioButton_r_t_text.Checked = true;
         }
         private void groupBox_r_dis_empty()
         {
             textBox_r_dis.Text = "";
-            groupBox_r_dis.Enabled = false;
+            groupBox_r_dis.Enabled = true;
         }
 
         #region//自动回复区清空
@@ -381,7 +382,8 @@ namespace IpTool
 
 
         }
-
+        #region//   按钮实现函数
+        //  监听操作
         private void My_Listen()
         {
             //
@@ -390,6 +392,7 @@ namespace IpTool
             button_bind.Text = "释放";
         }
 
+        //  发送操作
         private void My_send()
         {
 
@@ -433,11 +436,11 @@ namespace IpTool
         {
             /// 像 TcpListen 这种少数情况要优先考虑
             /// 最好在if判断的最前面
-            
-            if(bTcpListen)
+
+            if (bTcpListen)
             {
                 My_free();
-                Group_local_control(false,true);
+                Group_local_control(false, true);
             }
             /// udp释放
             /// 
@@ -459,9 +462,64 @@ namespace IpTool
             }
         }
 
-        private void Group_local_control(bool bl,bool bListen=false)
+        //  绑定具体实现
+        private bool My_bind()
         {
-            if(bListen)
+            if (bUdp)
+            {
+
+            }
+            return true;
+        }
+        #endregion
+        //  tcp 断开操作
+        private void un_connect_remote()
+        {
+            //断开的动作只会来自 TcpClient
+
+            button_s_t_con.Text = "连接";
+            bTcp_connected = false;
+            button_s_t_send.Enabled = false;
+            textBox_s_t_ip.Enabled = true;
+            textBox_s_t_port.Enabled = true;
+            groupBox_recv.Enabled = false;
+
+        }
+
+        private void connect_remote()
+        {
+            //只有tcpclient才会连接，所以不必再检查工作模式
+            //连接前先检查目的point
+            if (str_remote_ip_check)
+            {
+                if (bTcp_connected = connect_ditail())
+                { After_tcp_connected(); }
+            }
+        }
+        //tcp连接成功后的后续工作
+        private void After_tcp_connected()
+        {
+            button_s_t_con.Text = "断开";
+            if (groupBox_s_contain.Enabled) button_s_t_send.Enabled = true;
+            textBox_s_t_ip.Enabled = false;
+            textBox_s_t_port.Enabled = false;
+
+            bStartRecv = true;
+            groupBox_recv.Enabled = true;
+        }
+
+        private bool connect_ditail()
+        {
+
+            return true;
+        }
+
+        #endregion
+
+        //  控件使能
+        private void Group_local_control(bool bl, bool bListen = false)
+        {
+            if (bListen)
             {
                 //  Listen_server
                 //  监听绑定
@@ -498,49 +556,6 @@ namespace IpTool
             }
         }
 
-
-        #endregion
-
-        private void un_connect_remote()
-        {
-            //断开的动作只会来自 TcpClient
-
-            button_s_t_con.Text = "连接";
-            bTcp_connected = false;
-            button_s_t_send.Enabled = false;
-            textBox_s_t_ip.Enabled = true;
-            textBox_s_t_port.Enabled = true;
-            groupBox_recv.Enabled = false;
-
-        }
-
-        private void connect_remote()
-        {
-            //连接前先检查目的point
-            if (str_remote_ip_check)
-            {
-                if(bTcp_connected = connect_ditail())
-                {
-                    button_s_t_con.Text = "断开";
-                    if(groupBox_s_contain.Enabled) button_s_t_send.Enabled = true;
-                    textBox_s_t_ip.Enabled = false;
-                    textBox_s_t_port.Enabled = false;
-
-                    bStartRecv = true;
-                    groupBox_recv.Enabled = true;
-
-                }
-
-            }
-        }
-
-        private bool connect_ditail()
-        {
-
-            return true;
-        }
-
-
         private void My_free()
         {
             ///关于udp的释放相对容易
@@ -550,15 +565,12 @@ namespace IpTool
             ///
             if (bTcpListen)
             {
-                
+
             }
 
         }
 
-        private bool My_bind()
-        {
-            return true;
-        }
+
 
 
 
@@ -566,7 +578,7 @@ namespace IpTool
 
         #endregion
 
-        #region//   textBox修改事件
+        #region//   textBox修改事件主要只检查ip port合法性
         private void textBoxText_Change(object sender, EventArgs e)
         {
             TextBox textBox = sender as TextBox;
@@ -581,10 +593,11 @@ namespace IpTool
             else if (textBox.Name == textBox_s_t_ip.Name
                 || textBox.Name == textBox_s_t_port.Name)
             {
+                str_remote_ip_check = check_point(textBox_s_t_ip.Text, textBox_s_t_port.Text);
 
-                if (check_point(textBox_s_t_ip.Text, textBox_s_t_port.Text))
+                if (str_remote_ip_check)
                 {
-                    str_remote_ip_check = true;
+                    
 
                     //  激活发送按钮的条件判断 1.udp协议 或者 已经连接的 tcp
                     if (bUdp
@@ -599,17 +612,69 @@ namespace IpTool
                     }
 
                 }
+                else
+                { button_s_t_send.Enabled = false; button_s_t_con.Enabled = false; }
             }
         }
 
-        private bool check_point(string s_ip, string s_port)  //检查 ip port 规范
+        #region//检查 ip port 书写规范
+        //  检查ip
+        private bool check_point(string s_ip, string s_port)
         {
-            if (s_ip != "" && s_port != "")
-                return true;
+            ///具体细节由 IPAddress.TryParse(s_ip, out ip)检查
+            ///但是 ipv4 中的3个 “.” 是检查不了的，单独检查
+            if (check_ip(s_ip))
+            {
+                if (!check_port(s_port)) return false;
+                IPAddress ip = new IPAddress(new Byte[4]);
+                if (
+                    IPAddress.TryParse(s_ip, out ip)
+                    )
+                {
+                    return true;
+                }
+
+            }
             return false;
         }
+        //  检查port
+        private bool check_port(string s_port)
+        {
+            int i;
+            if (!int.TryParse(s_port, out i)) { Status_label.Text = "端口格式错误"; return false; }
+            if (i < 0 || i > 65535) { Status_label.Text = "端口超过0-65535"; return false; }
 
+            Status_label.Text = "";
+            return true;
+        }
+
+        private bool check_ip(string s_ip)
+        {
+            int i = 0;
+            foreach (var ch in s_ip)
+            {
+                if (ch == '.') i++;
+            }
+            if (i == 3)
+            { Status_label.Text = ""; return true; }
+
+            Status_label.Text = "ip格式错误";
+            return false;
+        }
         #endregion
+
+        #endregion 
+
+        //  单机TextBox事件
+        private void Click_TextBox(object sender, EventArgs e)
+        {
+            TextBox textBox = sender as TextBox;
+            if (textBox == null) return;
+            BeginInvoke((Action)delegate
+            {
+                textBox.SelectAll();
+            });
+        }
 
 
     }
