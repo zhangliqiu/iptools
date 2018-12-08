@@ -7,24 +7,37 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Net;
+using System.Net.Sockets;
 
 namespace IpTool
 {
     public partial class mainform : Form
     {
-        //  全局变量
-        bool str_local_ip_check = false;
-        bool str_remote_ip_check = false;
-        bool bTcp_connected = false;
-        bool bStartRecv = false;
-        bool bTcpListen = false;
-        bool bSendback = false;
-        bool bUdp = false;
-        bool bBind = false;
-        bool bTcpClient = false;
-        
+        #region//  全局变量
+        //  状态变量
+        bool str_local_ip_check = false;    //本地端口检查
+        bool str_remote_ip_check = false;   //远程端口检查
+        bool bTcp_connected = false;        //tcp连接状态
+        bool bStartRecv = false;            //接收线程状态
+        bool bTcpListen = false;            //tcp监听状态
+        bool bSendback = false;             //是否自动回传
+        bool bUdp = false;                  //协议选择
+        bool bBind = false;                 //绑定状态
+        bool bTcpClient = false;            //Client or Server选择
 
+        //  储存控件
+        string s_send_contain;              //发送区类容
+        //  数据类型
         Datetype sendtype, recvtype, backtype;
+
+        //  套接字引用
+        TcpClient tcpclient;
+        TcpListener tcplistener;
+        UdpClient udpclient;
+
+        #endregion
+        
         enum Datetype { Text, Bin, File, Hex, Recved };
         #region//   初始化区
         public mainform()
@@ -490,7 +503,7 @@ namespace IpTool
 
         private void un_connect_remote()
         {
-            //断开的动作只会来自与 TcpClient
+            //断开的动作只会来自 TcpClient
 
             button_s_t_con.Text = "连接";
             bTcp_connected = false;
