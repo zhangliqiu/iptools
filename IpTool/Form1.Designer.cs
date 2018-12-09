@@ -587,8 +587,7 @@
             // Status_label
             // 
             this.Status_label.Name = "Status_label";
-            this.Status_label.Size = new System.Drawing.Size(56, 17);
-            this.Status_label.Text = "初始状态";
+            this.Status_label.Size = new System.Drawing.Size(0, 17);
             // 
             // mainform
             // 
