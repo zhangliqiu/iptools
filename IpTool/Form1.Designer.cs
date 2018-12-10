@@ -264,6 +264,7 @@
             this.textBox_s_t_port.Name = "textBox_s_t_port";
             this.textBox_s_t_port.Size = new System.Drawing.Size(49, 21);
             this.textBox_s_t_port.TabIndex = 2;
+            this.textBox_s_t_port.Text = "123";
             this.textBox_s_t_port.TextChanged += new System.EventHandler(this.textBoxText_Change);
             // 
             // button_s_t_send
