@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Net;
 using System.Net.Sockets;
+using System.Threading;
 
 namespace IpTool
 {
@@ -28,12 +29,21 @@ namespace IpTool
 
         string str_local_ip;
         string str_local_port;
+        int local_port;
         string str_remote_ip;
         string str_remote_port;
+        int remote_port;
+
+        IPEndPoint remote_iep = new IPEndPoint(IPAddress.Any, 0);
+
+        Byte[] recvBuff;
+        Thread handRecvTh, handSendBack;
 
         const bool Empty_C_S = true;         //Empty panel_c_s区
                                              //  储存控件
-        string s_send_contain;              //发送区类容
+        string s_send_contain;
+        string s_back_contain;
+        //发送区类容
         //  数据类型
         Datetype sendtype, recvtype, backtype;
 
@@ -215,7 +225,7 @@ namespace IpTool
         private void Free_udp()
         {
             //
-            if (udpclient != null) udpclient.Close();
+            if (udpclient != null) { udpclient.Close();udpclient.Dispose(); }
         }
 
         #endregion
@@ -332,6 +342,11 @@ namespace IpTool
         #region//发送区清空
         private void groupBox_send_empty()
         {
+            if(bTcp_connected)
+            {
+                Free_tcp_connect();
+                bTcp_connected = false;
+            }
             groupBox_s_t_empty();
             groupBox_s_contain_empty();
             groupBox_s_to_where_empty();
@@ -366,6 +381,7 @@ namespace IpTool
         #region//接收区清空
         private void groupBox_recv_empty()
         {
+            
             groupBox_r_t_empty();
             groupBox_r_dis_empty();
             panel_back_empty();//自动回复区清空
@@ -388,6 +404,11 @@ namespace IpTool
         #region//自动回复区清空
         private void panel_back_empty()
         {
+            if(bSendback)
+            {
+                handSendBack.Abort();
+                bSendback = false;
+            }
             groupBox_b_t_empty();
             groupBox_b_contain_empty();
         }
@@ -456,32 +477,78 @@ namespace IpTool
         //  发送操作
         private void My_send()
         {
+            byte[] sendbuff;
+            switch (sendtype)
+            {
+                case Datetype.Text:
+                    break;
+                case Datetype.Bin:
+                    break;
+                case Datetype.File:
+                    break;
+                case Datetype.Hex:
+                    break;
+                case Datetype.Recved:
+                    break;
+                default:
+                    break;
+            }
 
+        }
 
+        
+
+        private void Start_send(byte[] sendbuff, IPEndPoint remote_iep)
+        {
+            if(bUdp)
+            {
+                try
+                {
+                    udpclient.Send(sendbuff, sendbuff.Length, remote_iep);
+
+                }
+                catch (Exception)
+                {
+
+                    throw;
+                }
+            }
         }
         #region//   绑定操作
         private void local_socket_bind()
         {
-            //
-            int port = int.Parse(str_local_port);
-            IPEndPoint lip = new IPEndPoint(IPAddress.Parse(str_local_ip), port);
-
-
             /// udp本地绑定
             /// 
             /// 
+            IPEndPoint iep = new IPEndPoint(IPAddress.Parse(str_local_ip), local_port);
+            
             if (bUdp)
             {
                 //
+                try
+                {
+                    udpclient = new UdpClient(iep);
+                    //udpclient.Client.ReceiveTimeout = 1000;
+                }
+                catch (Exception er)
+                {
 
-                Status_label.Text = "udp绑定成功";
-                bBind = true;
-                button_bind.Text = "释放";
-                groupBox_send.Enabled = true;
-                groupBox_recv.Enabled = true;
-                textBox_local_ip.Enabled = false;
-                textBox_local_port.Enabled = false;
-                Start_recv();
+                    Status_label.Text = er.Message;
+                    return;
+                }
+
+                {
+                    Status_label.Text = "udp绑定成功";
+                    textBox_local_port.Text = ((IPEndPoint)udpclient.Client.LocalEndPoint).Port.ToString();
+                    bBind = true;
+                    button_bind.Text = "释放";
+                    groupBox_send.Enabled = true;
+                    groupBox_recv.Enabled = true;
+                    textBox_local_ip.Enabled = false;
+                    textBox_local_port.Enabled = false;
+
+                    Start_recv();
+                }
             }
             /// tcp本地绑定
             /// 
@@ -489,15 +556,26 @@ namespace IpTool
             else
             {
                 //
+                try
+                {
+                    tcpclient = new TcpClient(iep);
+                }
+                catch (Exception er)
+                {
+                    Status_label.Text = er.Message;
+                    return;
+                }
 
-                
-                Status_label.Text = "tcp绑定成功";
-                bBind = true;
-                button_bind.Text = "释放";
-                groupBox_send.Enabled = true;
-                button_s_t_con.Enabled = true;
-                textBox_local_ip.Enabled = false;
-                textBox_local_port.Enabled = false;
+                {
+                    Status_label.Text = "tcp绑定成功";
+                    bBind = true;
+                    button_bind.Text = "释放";
+                    groupBox_send.Enabled = true;
+                    button_s_t_con.Enabled = true;
+                    textBox_local_ip.Enabled = false;
+                    textBox_local_port.Enabled = false;
+
+                }
 
             }
 
@@ -506,40 +584,91 @@ namespace IpTool
 
         private void Start_recv()
         {
-            
+            handRecvTh = new Thread(new ThreadStart(RecvTh))
+            {
+                //IsBackground = true
+            };
+            handRecvTh.Start();
+            bStartRecv = true;
+        }
+        private void RecvTh()
+        {
+            if (bUdp)
+            {                
+                while (bStartRecv)
+                {
+                    try
+                    {
+                        recvBuff = udpclient.Receive(ref remote_iep);
+                    }
+                    catch (Exception er)
+                    {
+                        return;
+                    }
+                    if(recvBuff!=null)
+                        Status_Message("收到来自 " + remote_iep + " " + recvBuff.Length + " bytes");
+                }
+
+            }
+            else
+            {
+
+            }
+        }
+
+        private void Status_Message(string message)
+        {
+            BeginInvoke((Action)delegate
+            {
+                Status_label.Text = message;
+            }
+            );
         }
 
         private void local_socket_unbind()
         {
-            /// 像 TcpListen 这种少数情况要优先考虑
-            /// 最好在if判断的最前面
-
-            if (bTcpListen)
+            if(bUdp)
             {
-                My_free();
-                Group_local_control(false, true);
-            }
-            /// udp释放
-            /// 
-            /// 
-            else if (bUdp)
-            {
-                My_free();
-                Group_local_control(false);
 
+                try
+                {
+                    groupBox_recv_empty();
+                    groupBox_send_empty();
+                    udpclient.Close();
+                    udpclient.Dispose();
+
+                    bStartRecv = false;
+
+                    button_bind.Text = "绑定";
+                    textBox_local_ip.Enabled = true;
+                    textBox_local_port.Enabled = true;
+                    
+                }
+                catch (Exception er)
+                {
+                    Status_label.Text = er.Message;
+                }
             }
-            /// tcp释放
-            /// 
-            /// 
             else
             {
-                My_free();
-                Group_local_control(false);
-
+                if(bTcp_connected)
+                {
+                    try
+                    {
+                        groupBox_recv_empty();
+                        tcpclient.Close();
+                        tcpclient.Dispose();
+                    }
+                    catch (Exception er)
+                    {
+                        Status_label.Text = er.Message;
+                    }
+                    
+                }
             }
         }
 
-       
+
         #endregion
         //  tcp 断开操作
         private void un_connect_remote()
@@ -639,7 +768,7 @@ namespace IpTool
 
         }
 
-        
+
         #endregion
 
         #region//   textBox修改事件主要只检查ip port合法性
@@ -715,6 +844,13 @@ namespace IpTool
                     }
 
                     break;
+                case "textBox_s_contain":
+                    s_send_contain = textBox_s_contain.Text;
+
+                    break;
+                case "textBox_b_contain":
+                    s_back_contain = textBox_b_contain.Text;
+                    break;
                 case "":
 
                     break;
@@ -758,9 +894,9 @@ namespace IpTool
         //  检查port
         private bool check_port(string s_port)
         {
-            int i;
-            if (!int.TryParse(s_port, out i)) { return false; }
-            if (i < 0 || i > 65535) { return false; }
+
+            if (!int.TryParse(s_port, out local_port)) { return false; }
+            if (local_port < 0 || local_port > 65535) { return false; }
             return true;
         }
         #endregion
@@ -772,7 +908,8 @@ namespace IpTool
         {
             TextBox textBox = sender as TextBox;
             if (textBox == null) return;
-            BeginInvoke((Action)delegate
+            BeginInvoke(
+                (Action)delegate
             {
                 textBox.SelectAll();
             });
@@ -794,8 +931,8 @@ namespace IpTool
                 if (groupBox_s_contain.Enabled)//确定类容
                     if (str_remote_point_check)//远程地址无误
                         button_s_t_send.Enabled = true;
-            else
-                button_s_t_send.Enabled = false;
+                    else
+                        button_s_t_send.Enabled = false;
         }
         #endregion
     }

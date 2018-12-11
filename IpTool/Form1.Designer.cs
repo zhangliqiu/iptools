@@ -304,6 +304,7 @@
             this.textBox_s_contain.Name = "textBox_s_contain";
             this.textBox_s_contain.Size = new System.Drawing.Size(136, 77);
             this.textBox_s_contain.TabIndex = 1;
+            this.textBox_s_contain.TextChanged += new System.EventHandler(this.textBoxText_Change);
             // 
             // groupBox_s_t
             // 
@@ -493,6 +494,7 @@
             this.textBox_b_contain.Name = "textBox_b_contain";
             this.textBox_b_contain.Size = new System.Drawing.Size(130, 69);
             this.textBox_b_contain.TabIndex = 1;
+            this.textBox_b_contain.TextChanged += new System.EventHandler(this.textBoxText_Change);
             // 
             // groupBox_r_t
             // 
